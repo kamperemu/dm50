@@ -1,0 +1,71 @@
+{% extends "log.html" %}
+
+{% block title %}
+Direct Messages
+{% endblock %}
+
+{% block users %}
+  <input id = "user_search" autocomplete="off" placeholder="users" type="search">
+  <div id="users">
+    {% for user in users %}
+      <a href="/?name={{ user.username }}">{{ user.username }}</a>
+    {% endfor %}
+  </div>
+  
+  <script>
+    let input = document.querySelector("#user_search")
+    input.addEventListener('input', async function() {
+      let response = await fetch('/usernames?q=' + input.value)
+      let users = await response.text();
+      document.querySelector('#users').innerHTML = users;
+    });
+  </script>
+{% endblock %}
+
+{% block username %}{{ myuser }}{% endblock %}
+
+{% block text %}
+  {% if 'name' in request.args %}
+    <div>
+      <ul id="messages">
+        <hr>
+        {% for message in messages %}
+          <li>{{ message.name }}: {{ message.message }}</li>
+          <hr>
+        {% endfor %}
+      </ul>
+      <script>
+        async function update_messasges() {}
+        setInterval(async function() {
+          let response = await fetch('/text/{{ reader.id }}')
+          let messages = await response.text();
+          document.querySelector('#messages').innerHTML = messages;
+        }, 1000);
+      </script>
+    </div>
+    <div>
+      <form action="/?name={{ reader.username }}" method="post" class="row row-cols-lg-auto g-3">
+        <div class="input-group mb-3">
+          <input autocomplete="off" autofocus type="text" class="form-control" id="message" name="message"
+            placeholder="Message" required>
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit" class="btn btn-primary">Send</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <hr>
+  {% else %}
+    <hr>
+    <h1 class="center">Please select a user to start messaging</h1>
+    <hr>
+    {% for user in users %}
+      <ul>
+        <a href="/?name={{ user.username }}" class="better-link">
+          {{ user.username }}
+        </a>
+      </ul>
+    {% endfor %}
+    <hr>
+  {% endif %}
+{% endblock %}

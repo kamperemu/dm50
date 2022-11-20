@@ -1,0 +1,142 @@
+/* 
+original styles.css file was lost because of accidental permanent delete of static folder :( this is my best effort at replicating it 
+EDIT: this version is honestly an upgrade. (except i might be missing something over the original)
+*/
+
+
+/* Size for brand */
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+/* Colors for brand */
+nav .navbar-brand .blue
+{
+    color: #537fbe;
+}
+nav .navbar-brand .red
+{
+    color: #ea433b;
+}
+nav .navbar-brand .yellow
+{
+    color: #f5b82e;
+}
+nav .navbar-brand .green
+{
+    color: #2e944b;
+}
+
+
+/* https://www.w3schools.com/howto/howto_css_fixed_sidebar.asp */
+/* The sidebar menu */
+.sidenav {
+  height: 100%; /* Full-height: remove this if you want "auto" height */
+  width: 180px; /* Set the width of the sidebar */
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 0; /* Stay at the top */
+  left: 0;
+  background-color: #111; /* Black */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+}
+
+/* The navigation menu links */
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #818181;
+  display: block;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+color: #f1f1f1;
+}
+
+/* Style page content */
+.main {
+margin-left: 180px; /* Same as the width of the sidebar */
+padding: 0px 10px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px; width: 80px}
+  .main {margin-left: 80px; font-size: 10px}
+  .sidenav a {font-size: 10px;}
+  #user_search {width:80px;}
+}
+
+/* On smaller screens, where width is less than 300px, change the style of the sidebar (less padding and a smaller font size) */
+@media screen and (max-width: 300px) {
+  h1 {font-size: 15px;}
+  .sidenav {padding-top: 15px; width: 80px}
+  .main {margin-left: 80px; font-size: 12px}
+  .sidenav a {font-size: 12px;}
+  #user_search {width:80px;}
+}
+/* On smaller screens, where width is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+@media screen and (max-width: 450px) {
+  h1 {font-size: 20px;}
+  .sidenav {padding-top: 15px; width: 120px}
+  .main {margin-left: 120px; font-size: 16px}
+  .sidenav a {font-size: 14px;}
+  #user_search {width:120px;}
+}
+
+body {
+  background-color: #46494c;
+  color:#f1f1f1;
+}
+
+hr {
+  opacity: 0.1;
+}
+
+#user_search {
+  width: 180px; /* same as sidebar size */
+}
+
+#users {
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+
+#messages {
+  padding-left: 0px;
+  list-style: none;
+}
+
+.better-link {
+  text-decoration: none;
+  color: #bdb7b7;
+}
+
+.better-link:hover {
+  color: #6b6868
+}
+
+.center {
+  text-align: center;
+}
+
+/* scrollbar */
+::-webkit-scrollbar-track
+{
+	background-color: #696b6d;
+}
+
+::-webkit-scrollbar
+{
+	width: 5px;
+	background-color: #696b6d;
+}
+
+::-webkit-scrollbar-thumb
+{
+	background-color: #373b38;
+}
