@@ -3,5 +3,3 @@ Flask
 Flask-Session
 Flask-SQLAlchemy
 requests
-gunicorn
-psycopg2
