@@ -1,6 +1,8 @@
 from flask import redirect, render_template, session
 from functools import wraps
 
+# Code taken from a snippet of C$50 Finance pset on https://cs50.harvard.edu/x/2022/psets/9/finance/
+
 
 def apology(message, code=400):
     """Render message as an apology to user."""
