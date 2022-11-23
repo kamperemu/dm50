@@ -1,9 +1,10 @@
 import os
 
+# open source modules
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
-from werkzeug.security import check_password_hash, generate_password_hash
 
+# self made modules
 from helpers import apology, login_required
 from schema import *
 
@@ -45,11 +46,19 @@ def index():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # Ensure session is in place
+        if session.get("user_id") is None:
+            return apology("must have user session in place", 400)
+
+        # Ensure message has been sent
+        if not request.form.get("message"):
+            return apology("message must have characters to submit", 400)
+
+        # Queries the reader of the messages sent
+        reader = users.getby_name(request.args.get("name", type=str))
+
         # Sends direct message to database
-        reader = users.query.filter_by(username = request.args.get("name", type=str)).first()
-        dms = dm(sender_id=session.get("user_id"), reader_id = reader.id, message = request.form.get("message"))
-        db.session.add(dms)
-        db.session.commit()
+        dm.add_dm(session.get("user_id"), reader.id, request.form.get("message"))
 
         # Redirects back to the person being texted
         url = "/?name=" + request.args.get("name", type=str)
@@ -63,26 +72,20 @@ def index():
             return apology("must have user session in place", 400)
 
         # Queries all users except the current user and the queries the current user
-        names = users.query.filter(users.id != session["user_id"]).all()
+        names = users.get_notid(session["user_id"])
         
-        myuser = users.query.get(session["user_id"]).username
+        # Queries the currently active user's username
+        myuser = users.get_username(session["user_id"])
 
+        # renders alternate template when reader is not selected
         if request.args.get("name", type=str) is None:
             return render_template("index.html", users=names, myuser=myuser)
         
-        reader = users.query.filter_by(username = request.args.get("name", type=str)).first()
+        # Queries the reader of the messages sent
+        reader = users.getby_name(request.args.get("name", type=str))
 
         # Queries all messages from sender and reader
-        messages = db.session.query(
-            users.username.label("name"), dm.message.label("message")
-        ).filter(
-            users.id == dm.sender_id
-        ).filter(
-            (
-                ((dm.sender_id == session.get("user_id")) & (dm.reader_id == reader.id)) | 
-                ((dm.sender_id == reader.id) & (dm.reader_id == session.get("user_id")))
-            )
-        ).all()
+        messages = dm.get_dm(session.get("user_id"), reader.id)
         
         # Renders the index template with information about users
         return render_template("index.html", users=names, reader=reader, myuser=myuser, messages=messages)
@@ -90,19 +93,10 @@ def index():
 
 @app.route("/text/<int:id>")
 def text(id):
-    """Shows the text message interaction between two users"""
+    """API that shows the text message interaction between two users"""
 
     # Queries all messages from sender and reader
-    messages = db.session.query(
-        users.username.label("name"), dm.message.label("message")
-    ).filter(
-        users.id == dm.sender_id
-    ).filter(
-        (
-            ((dm.sender_id == session.get("user_id")) & (dm.reader_id == id)) | 
-            ((dm.sender_id == id) & (dm.reader_id == session.get("user_id")))
-        )
-    ).all()
+    messages = dm.get_dm(session.get("user_id"), id)
     
     # Renders template with messages
     return render_template("text.html", messages=messages)
@@ -110,20 +104,20 @@ def text(id):
 
 @app.route("/usernames")
 def usernames():
-    """Shows all users"""
+    """API that shows all users"""
 
     q = request.args.get("q")
     if q:
         # Changes the name for the use of LIKE statement and the executes a query for those users
-        names = users.query.filter(users.id != session["user_id"], users.username.like("%"+q+"%")).all()
+        names = users.get_like_notid(session["user_id"], q)
     else:
         # Queries all users except the current user
-        names = users.query.filter(users.id != session["user_id"]).all()
+        names = users.get_notid(session["user_id"])
     
     # Renders template with users
     return render_template("users.html", users=names)
         
-
+# Parts of code taken from C$50 Finance pset on https://cs50.harvard.edu/x/2022/psets/9/finance/
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
@@ -143,10 +137,10 @@ def login():
             return apology("must provide password", 400)
 
         # Query database for username
-        user = users.query.filter_by(username=request.form.get("username")).first()
+        user = users.getby_name(request.form.get("username"))
 
         # Ensure username exists and password is correct
-        if user is None or not check_password_hash(user.hash, request.form.get("password")):
+        if user is None or not user.check_hash(request.form.get("password")):
             return apology("invalid username and/or password", 400)
 
         # Remember which user has logged in
@@ -200,7 +194,7 @@ def register():
             return apology("must provide confirmation password", 400)
 
         # Ensure username doesn't exist in table already
-        userExists = users.query.filter_by(username=request.form.get("username")).first() is not None
+        userExists = users.getby_name(username=request.form.get("username")) is not None
         if userExists:
             return apology("username already exists", 400)
 
@@ -209,10 +203,8 @@ def register():
             return apology("password and confirmation password do not match", 400)
 
         # Inserts data into the database
-        user = users(username=request.form.get("username"), hash=generate_password_hash(request.form.get("password")))
-        db.session.add(user)
-        db.session.commit()
-
+        users.add_user(request.form.get("username"), request.form.get("password"))
+        
         # Sends user a message stating that the user is registered
         flash("User Registered")
 
@@ -245,10 +237,10 @@ def change():
             return apology("must provide confirmation password", 400)
 
         # Query database for user
-        user = users.query.get(session["user_id"])
+        user = users.getby_id(session["user_id"])
 
         # Ensure user exists and password is correct
-        if not check_password_hash(user.hash, request.form.get("old_password")):
+        if not user.check_hash(request.form.get("old_password")):
             return apology("invalid old password", 400)
 
         # Checks whether password and confirmation password match
@@ -256,8 +248,7 @@ def change():
             return apology("new password and confirmation password do not match", 400)
 
         # Updates has in the database
-        user.hash = generate_password_hash(request.form.get("password"))
-        db.session.commit()
+        user.change_hash(request.form.get("password"))
 
         # Sends user a message stating that the user is registered
         flash("Password changed")

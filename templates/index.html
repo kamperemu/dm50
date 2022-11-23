@@ -13,10 +13,16 @@ Direct Messages
   </div>
   
   <script>
+    // selects the user_search html input
     let input = document.querySelector("#user_search")
+
+    // checks when there is an event in user_search
     input.addEventListener('input', async function() {
+      // fetches the usernames api for the value of user_search
       let response = await fetch('/usernames?q=' + input.value)
       let users = await response.text();
+
+      // updates the fetched api with the users list
       document.querySelector('#users').innerHTML = users;
     });
   </script>
@@ -35,11 +41,17 @@ Direct Messages
         {% endfor %}
       </ul>
       <script>
+        // runs update messages every few seconds
         async function update_messasges() {}
         setInterval(async function() {
+          
+          // fetches data from the api targeted towards the reader
           let response = await fetch('/text/{{ reader.id }}')
           let messages = await response.text();
+
+          // updates fetched data from the api with the messages list
           document.querySelector('#messages').innerHTML = messages;
+
         }, 1000);
       </script>
     </div>

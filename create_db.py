@@ -11,10 +11,11 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(os.path.absp
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 
-# Creates the database
 def main():
+    """Creates the database"""
     db.create_all()
 
 if __name__ == "__main__":
+    """Run this file on creation of new database"""
     with app.app_context():
         main()
