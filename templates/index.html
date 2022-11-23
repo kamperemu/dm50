@@ -5,7 +5,7 @@ Direct Messages
 {% endblock %}
 
 {% block users %}
-  <input id = "user_search" autocomplete="off" placeholder="users" type="search">
+  <input id = "side_user_search" autocomplete="off" type="text" class="form-control" name="search" placeholder="search">
   <div id="users">
     {% for user in users %}
       <a href="/?name={{ user.username }}">{{ user.username }}</a>
@@ -14,7 +14,7 @@ Direct Messages
   
   <script>
     // selects the user_search html input
-    let input = document.querySelector("#user_search")
+    let input = document.querySelector("#side_user_search")
 
     // checks when there is an event in user_search
     input.addEventListener('input', async function() {
@@ -71,13 +71,29 @@ Direct Messages
     <hr>
     <h1 class="center">Please select a user to start messaging</h1>
     <hr>
+    <input id="main_user_search" autocomplete="off" autofocus type="text" class="form-control" name="search" placeholder="search">
+    <hr>
+    <div id="main_users" class="better-link row-a">
     {% for user in users %}
-      <ul>
         <a href="/?name={{ user.username }}" class="better-link">
           {{ user.username }}
         </a>
-      </ul>
     {% endfor %}
+    </div>
     <hr>
+    <script>
+      // selects the user_search html input
+      let minput = document.querySelector("#main_user_search")
+  
+      // checks when there is an event in user_search
+      minput.addEventListener('input', async function() {
+        // fetches the usernames api for the value of user_search
+        let response = await fetch('/usernames?q=' + minput.value)
+        let users = await response.text();
+  
+        // updates the fetched api with the users list
+        document.querySelector('#main_users').innerHTML = users;
+      });
+    </script>
   {% endif %}
 {% endblock %}

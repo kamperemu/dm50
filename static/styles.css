@@ -131,10 +131,6 @@ hr {
   opacity: 0.1;
 }
 
-#user_search {
-  width: 180px; /* same as sidebar size */
-}
-
 #users {
   padding-top: 20px;
   padding-bottom: 10px;
@@ -145,13 +141,22 @@ hr {
   list-style: none;
 }
 
-.better-link {
+.better-link a{
   text-decoration: none;
   color: #bdb7b7;
 }
 
-.better-link:hover {
+.better-link a:hover{
   color: #6b6868
+}
+
+.row-a a{
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 1 em;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 40px;
 }
 
 .center {
