@@ -194,7 +194,7 @@ def register():
             return apology("must provide confirmation password", 400)
 
         # Ensure username doesn't exist in table already
-        userExists = users.getby_name(username=request.form.get("username")) is not None
+        userExists = users.getby_name(request.form.get("username")) is not None
         if userExists:
             return apology("username already exists", 400)
 
