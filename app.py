@@ -46,57 +46,79 @@ def index():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # store variables for cleaner code
+        # session.get searches session for given value
+        # request.form.get searches for html form and returns data from the given form
+        # request.args.get gets queries from url path
+        user_id = session.get("user_id")
+        message = request.form.get("message")
+        user_name = request.args.get("name")
+
         # Ensure session is in place
-        if session.get("user_id") is None:
+        if not user_id:
             return apology("must have user session in place", 400)
 
         # Ensure message has been sent
-        if not request.form.get("message"):
+        if not message:
             return apology("message must have characters to submit", 400)
 
         # Queries the reader of the messages sent
-        reader = users.getby_name(request.args.get("name", type=str))
+        reader = users.getby_name(user_name)
 
         # Sends direct message to database
-        dm.add_dm(session.get("user_id"), reader.id, request.form.get("message"))
+        dm.add_dm(user_id, reader.id, message)
 
         # Redirects back to the person being texted
-        url = "/?name=" + request.args.get("name", type=str)
+        url = "/?name=" + user_name
         return redirect(url)
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
 
+        # store variables for cleaner code
+        # session.get searches session for given value
+        # request.form.get searches for html form and returns data from the given form
+        # request.args.get gets queries from url path
+        user_id = session.get("user_id")
+        message = request.form.get("message")
+        user_name = request.args.get("name")
+
         # Ensure session is in place
-        if session.get("user_id") is None:
+        if not user_id:
             return apology("must have user session in place", 400)
 
         # Queries all users except the current user and the queries the current user
-        names = users.get_notid(session["user_id"])
+        names = users.get_notid(user_id)
         
         # Queries the currently active user's username
-        myuser = users.get_username(session["user_id"])
+        myuser = users.get_username(user_id)
 
         # renders alternate template when reader is not selected
-        if request.args.get("name", type=str) is None:
+        if not user_name:
             return render_template("index.html", users=names, myuser=myuser)
         
         # Queries the reader of the messages sent
-        reader = users.getby_name(request.args.get("name", type=str))
+        reader = users.getby_name(user_name)
 
         # Queries all messages from sender and reader
-        messages = dm.get_dm(session.get("user_id"), reader.id)
+        messages = dm.get_dm(user_id, reader.id)
         
         # Renders the index template with information about users
         return render_template("index.html", users=names, reader=reader, myuser=myuser, messages=messages)
 
 
-@app.route("/text/<int:id>")
-def text(id):
+@app.route("/text/<int:reader_id>")
+def text(reader_id):
     """API that shows the text message interaction between two users"""
 
+    # store variables for cleaner code
+    # session.get searches session for given value
+    # request.form.get searches for html form and returns data from the given form
+    # request.args.get gets queries from url path
+    sender_id = session.get("user_id")
+
     # Queries all messages from sender and reader
-    messages = dm.get_dm(session.get("user_id"), id)
+    messages = dm.get_dm(sender_id, reader_id)
     
     # Renders template with messages
     return render_template("text.html", messages=messages)
@@ -106,13 +128,19 @@ def text(id):
 def usernames():
     """API that shows all users"""
 
-    q = request.args.get("q")
-    if q:
+    # store variables for cleaner code
+    # session.get searches session for given value
+    # request.form.get searches for html form and returns data from the given form
+    # request.args.get gets queries from url path
+    user_id = session.get("user_id")
+    query = request.args.get("q")
+    
+    if query:
         # Changes the name for the use of LIKE statement and the executes a query for those users
-        names = users.get_like_notid(session["user_id"], q)
+        names = users.get_like_notid(user_id, query)
     else:
         # Queries all users except the current user
-        names = users.get_notid(session["user_id"])
+        names = users.get_notid(user_id)
     
     # Renders template with users
     return render_template("users.html", users=names)
@@ -128,19 +156,26 @@ def login():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # store variables for cleaner code
+        # # session.get searches session for given value
+        # # request.form.get searches for html form and returns data from the given form
+        # # request.args.get gets queries from url path 
+        user_name = request.form.get("username")
+        password = request.form.get("password")
+
         # Ensure username was submitted
-        if not request.form.get("username"):
+        if not user_name:
             return apology("must provide username", 400)
 
         # Ensure password was submitted
-        elif not request.form.get("password"):
+        elif not password:
             return apology("must provide password", 400)
 
         # Query database for username
-        user = users.getby_name(request.form.get("username"))
+        user = users.getby_name(user_name)
 
         # Ensure username exists and password is correct
-        if user is None or not user.check_hash(request.form.get("password")):
+        if not user or not user.check_hash(password):
             return apology("invalid username and/or password", 400)
 
         # Remember which user has logged in
@@ -181,29 +216,36 @@ def register():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # store variables for cleaner code
+        # # session.get searches session for given value
+        # # request.form.get searches for html form and returns data from the given form
+        # # request.args.get gets queries from url path 
+        user_name = request.form.get("username")
+        password = request.form.get("password")
+        confirmation_password = request.form.get("confirmation")
+
         # Ensure username was submitted
-        if not request.form.get("username"):
+        if not user_name:
             return apology("must provide username", 400)
 
         # Ensure password was submitted
-        if not request.form.get("password"):
+        if not password:
             return apology("must provide password", 400)
 
         # Ensure confirmation password was submitted
-        if not request.form.get("confirmation"):
+        if not confirmation_password:
             return apology("must provide confirmation password", 400)
 
         # Ensure username doesn't exist in table already
-        userExists = users.getby_name(request.form.get("username")) is not None
-        if userExists:
+        if users.getby_name(user_name):
             return apology("username already exists", 400)
 
         # Checks whether password and confirmation password match
-        if not (request.form.get("password") == request.form.get("confirmation")):
+        if not (password == confirmation_password):
             return apology("password and confirmation password do not match", 400)
 
         # Inserts data into the database
-        users.add_user(request.form.get("username"), request.form.get("password"))
+        users.add_user(user_name, password)
         
         # Sends user a message stating that the user is registered
         flash("User Registered")
@@ -224,31 +266,40 @@ def change():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # store variables for cleaner code
+        # # session.get searches session for given value
+        # # request.form.get searches for html form and returns data from the given form
+        # # request.args.get gets queries from url path 
+        user_id = session.get("user_id")
+        old_password = request.form.get("old_password")
+        password = request.form.get("password")
+        confirmation_password = request.form.get("confirmation")
+
         # Ensure username was submitted
-        if not request.form.get("old_password"):
+        if not old_password:
             return apology("must provide old password", 400)
 
         # Ensure password was submitted
-        if not request.form.get("password"):
+        if not password:
             return apology("must provide password", 400)
 
         # Ensure confirmation password was submitted
-        if not request.form.get("confirmation"):
+        if not confirmation_password:
             return apology("must provide confirmation password", 400)
 
         # Query database for user
-        user = users.getby_id(session["user_id"])
+        user = users.getby_id(user_id)
 
         # Ensure user exists and password is correct
-        if not user.check_hash(request.form.get("old_password")):
+        if not user.check_hash(old_password):
             return apology("invalid old password", 400)
 
         # Checks whether password and confirmation password match
-        if not (request.form.get("password") == request.form.get("confirmation")):
+        if not (password == confirmation_password):
             return apology("new password and confirmation password do not match", 400)
 
         # Updates has in the database
-        user.change_hash(request.form.get("password"))
+        user.change_hash(password)
 
         # Sends user a message stating that the user is registered
         flash("Password changed")
