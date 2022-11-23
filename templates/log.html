@@ -8,16 +8,17 @@
         <div class="sidenav">
             {% block users %}
             {% endblock %}
-            
-            <div class="dropdown footer">
-                <a href="#" class="text-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    {% block username %}{% endblock %}
-                </a>
-                <ul class="dropdown-menu dropdown-menu-dark shadow" aria-labelledby="dropdownUser">
-                    <li><a class="dropdown-item" href="/change">Change Password</a></li>
-                    <li><a class="dropdown-item" href="/logout">Sign out</a></li>
-                </ul>
+        </div>
+        
+        <!-- UI code for dropdown menu taken from https://www.w3schools.com/howto/howto_css_dropdown.asp-->
+        
+        <!-- Dropdown menu -->
+        <div class="dropdown">
+            <div class="dropdown-content">
+                <a href="/change">Change Password</a>
+                <a href="/logout">Sign out</a>
             </div>
+            <button class="dropbtn">{% block username %}{% endblock %}</button>
         </div>
         
         <!-- Page content -->
