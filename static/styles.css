@@ -46,12 +46,13 @@ nav .navbar-brand
   position: fixed;
   bottom: 0px;
   display: inline-block;
+  width: 180px;
+  font-size: 16px;
 }
 
 .dropdown-content {
   display: none;
   background-color: #2d2a2a;
-  min-width: 160px;
   z-index: 1;
 }
 
@@ -105,23 +106,21 @@ padding: 0px 10px;
 
 /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
 @media screen and (max-height: 400px) {
-  .sidenav {padding-top: 15px; width: 80px}
-  .main {margin-left: 80px; font-size: 10px}
+  .sidenav {padding-top: 15px; width: 100px}
+  .main {margin-left: 100px; font-size: 10px}
   .sidenav a {font-size: 10px;}
-  #user_search {width:80px;}
-  .dropbtn {width:80px; font-size: 10px;}
-  .sidenav-title {font-size: 20px;}
+  .dropdown {width:100px; font-size: 10px;}
+  .dropbtn {width:100px; font-size: 10px;}
 }
 
 /* On smaller screens, where width is less than 300px, change the style of the sidebar (less padding and a smaller font size) */
 @media screen and (max-width: 400px) {
   h1 {font-size: 15px;}
-  .sidenav {padding-top: 15px; width: 80px}
-  .main {margin-left: 80px; font-size: 12px}
+  .sidenav {padding-top: 15px; width: 100px}
+  .main {margin-left: 100px; font-size: 12px}
   .sidenav a {font-size: 12px;}
-  #user_search {width:80px;}
-  #user_dropdwon li {font-size: 10px}
-  .dropbtn {width:80px; font-size: 10px;}
+  .dropdown {width:100px; font-size: 10px;}
+  .dropbtn {width:100px; font-size: 10px;}
 }
 
 body {
@@ -167,7 +166,7 @@ hr {
 
 .sidenav-brand {
   text-align: center;
-  font-size: 30px !important;
+  font-size: 25px !important;
 }
 
 .center {
