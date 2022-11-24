@@ -9,8 +9,8 @@ class users(db.Model):
 
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, index=True)
-    username = db.Column(db.String, nullable=False, index=True)
-    hash = db.Column(db.Integer, nullable=False)
+    username = db.Column(db.String(20), nullable=False, index=True)
+    hash = db.Column(db.String(102), nullable=False)
 
     # Adds user to the database
     def add_user(name, password):
@@ -54,7 +54,7 @@ class dm(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     sender_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     reader_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    message = db.Column(db.String, nullable=False)
+    message = db.Column(db.String(5000), nullable=False)
     message_datetime = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
 
     def add_dm(sender_id, reader_id, message):
@@ -70,7 +70,7 @@ class dm(db.Model):
             users.id == dm.sender_id
         ).filter(
             (
-                ((dm.sender_id == dm_sender_id) & (dm.reader_id == dm_reader_id)) | 
+                ((dm.sender_id == dm_sender_id) & (dm.reader_id == dm_reader_id)) |
                 ((dm.sender_id == dm_reader_id) & (dm.reader_id == dm_sender_id))
             )
         ).all()

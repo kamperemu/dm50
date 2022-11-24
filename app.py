@@ -12,7 +12,14 @@ from schema import *
 app = Flask(__name__)
 
 # Configure SQLAlchemy
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(os.path.abspath(os.path.dirname(__file__)),"dms.db")
+SQLALCHEMY_DATABASE_URI = "mysql://{username}:{password}@{hostname}/{username}${databasename}".format(
+    username="",
+    password="",
+    hostname="",
+    databasename=""
+)
+app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 """
@@ -89,20 +96,20 @@ def index():
 
         # Queries all users except the current user and the queries the current user
         names = users.get_notid(user_id)
-        
+
         # Queries the currently active user's username
         myuser = users.get_username(user_id)
 
         # renders alternate template when reader is not selected
         if not user_name:
             return render_template("index.html", users=names, myuser=myuser)
-        
+
         # Queries the reader of the messages sent
         reader = users.getby_name(user_name)
 
         # Queries all messages from sender and reader
         messages = dm.get_dm(user_id, reader.id)
-        
+
         # Renders the index template with information about users
         return render_template("index.html", users=names, reader=reader, myuser=myuser, messages=messages)
 
@@ -119,7 +126,7 @@ def text(reader_id):
 
     # Queries all messages from sender and reader
     messages = dm.get_dm(sender_id, reader_id)
-    
+
     # Renders template with messages
     return render_template("text.html", messages=messages)
 
@@ -134,17 +141,17 @@ def usernames():
     # request.args.get gets queries from url path
     user_id = session.get("user_id")
     query = request.args.get("q")
-    
+
     if query:
         # Changes the name for the use of LIKE statement and the executes a query for those users
         names = users.get_like_notid(user_id, query)
     else:
         # Queries all users except the current user
         names = users.get_notid(user_id)
-    
+
     # Renders template with users
     return render_template("users.html", users=names)
-        
+
 # Parts of code taken from C$50 Finance pset on https://cs50.harvard.edu/x/2022/psets/9/finance/
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -159,7 +166,7 @@ def login():
         # store variables for cleaner code
         # # session.get searches session for given value
         # # request.form.get searches for html form and returns data from the given form
-        # # request.args.get gets queries from url path 
+        # # request.args.get gets queries from url path
         user_name = request.form.get("username")
         password = request.form.get("password")
 
@@ -219,7 +226,7 @@ def register():
         # store variables for cleaner code
         # # session.get searches session for given value
         # # request.form.get searches for html form and returns data from the given form
-        # # request.args.get gets queries from url path 
+        # # request.args.get gets queries from url path
         user_name = request.form.get("username")
         password = request.form.get("password")
         confirmation_password = request.form.get("confirmation")
@@ -246,7 +253,7 @@ def register():
 
         # Inserts data into the database
         users.add_user(user_name, password)
-        
+
         # Sends user a message stating that the user is registered
         flash("User Registered")
 
@@ -269,7 +276,7 @@ def change():
         # store variables for cleaner code
         # # session.get searches session for given value
         # # request.form.get searches for html form and returns data from the given form
-        # # request.args.get gets queries from url path 
+        # # request.args.get gets queries from url path
         user_id = session.get("user_id")
         old_password = request.form.get("old_password")
         password = request.form.get("password")
