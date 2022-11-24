@@ -12,7 +12,7 @@ from schema import *
 app = Flask(__name__)
 
 # Configure SQLAlchemy
-SQLALCHEMY_DATABASE_URI = "mysql://{username}:{password}@{hostname}/{username}${databasename}".format(
+SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{username}${databasename}".format(
     username="",
     password="",
     hostname="",
