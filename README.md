@@ -1,8 +1,7 @@
 # DM50: Direct Messaging Application
 #### App Demo: <https://kamperemu.pythonanywhere.com/>
-#### Video Demo:  <URL HERE>
-#### Description:
 
+#### Made mysql version for pythonanywhere application to handle more concurrent requests
 
 #### ERROR THAT NEED TO BE FIXED AFTER INSTALLATION
 The python module file flask_session/sessions.py causes needless server error\
