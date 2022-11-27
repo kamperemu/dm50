@@ -35,16 +35,17 @@ sudo apt install sqlite3
 
 A step by step series of examples that tell you how to get a development env running
 
-#### Install modules from requirements.txt with pip
+#### Install modules from requirements.txt with pip and creating the database
 
 ```
 pip install -r requirments.txt
+python3 create_db.py
 ```
 
 #### Create the database
 
 ```
-python3 create_db.py
+
 ```
 
 #### MODULE ERROR THAT NEED TO BE FIXED
