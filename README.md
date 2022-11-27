@@ -41,6 +41,12 @@ A step by step series of examples that tell you how to get a development env run
 pip install -r requirments.txt
 ```
 
+#### Create the database
+
+```
+python3 create_db.py
+```
+
 #### MODULE ERROR THAT NEED TO BE FIXED
 The python module file flask_session/sessions.py causes needless server error.\
 This can be fixed by using a text editor to replace the following in sessions.py.
