@@ -42,12 +42,6 @@ pip install -r requirments.txt
 python3 create_db.py
 ```
 
-#### Create the database
-
-```
-
-```
-
 #### MODULE ERROR THAT NEED TO BE FIXED
 The python module file flask_session/sessions.py causes needless server error.\
 This can be fixed by using a text editor to replace the following in sessions.py.
